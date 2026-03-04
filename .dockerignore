@@ -1,0 +1,30 @@
+# VCS
+.git/
+.gitignore
+
+# Build artifacts
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Local env / logs
+.env
+.env.*
+*.log
+
+# Dependencies/cache
+.m2/
+
+# Docker files
+Dockerfile*
+.dockerignore
+
+# Tests and coverage
+coverage/
