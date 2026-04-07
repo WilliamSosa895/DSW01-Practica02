@@ -2,28 +2,34 @@ package com.dsw01.practica02.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
-    @Value("${spring.security.user.name:admin}")
-    private String username;
+        private final EmpleadoUserDetailsService empleadoUserDetailsService;
+        private final RestAuthEntryPoint restAuthEntryPoint;
+        private final RestAccessDeniedHandler restAccessDeniedHandler;
 
-    @Value("${spring.security.user.password:admin 123}")
-    private String password;
+        public SecurityConfig(EmpleadoUserDetailsService empleadoUserDetailsService,
+                              RestAuthEntryPoint restAuthEntryPoint,
+                              RestAccessDeniedHandler restAccessDeniedHandler) {
+                this.empleadoUserDetailsService = empleadoUserDetailsService;
+                this.restAuthEntryPoint = restAuthEntryPoint;
+                this.restAccessDeniedHandler = restAccessDeniedHandler;
+        }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/actuator/health",
@@ -32,18 +38,36 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**"
                         ).permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/empleados/**").hasRole("MASTER")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/v1/empleados/**").hasRole("MASTER")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/empleados/**").hasRole("MASTER")
                         .anyRequest().authenticated()
                 )
+                                .exceptionHandling(ex -> ex
+                                        .authenticationEntryPoint(restAuthEntryPoint)
+                                        .accessDeniedHandler(restAccessDeniedHandler)
+                                )
+                                .authenticationProvider(daoAuthenticationProvider())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails adminUser = User.withUsername(username)
-                .password("{noop}" + password)
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(adminUser);
+                return empleadoUserDetailsService;
+        }
+
+        @Bean
+        @SuppressWarnings("deprecation")
+        public PasswordEncoder passwordEncoder() {
+                return NoOpPasswordEncoder.getInstance();
+        }
+
+        @Bean
+        public DaoAuthenticationProvider daoAuthenticationProvider() {
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+                provider.setUserDetailsService(empleadoUserDetailsService);
+                provider.setPasswordEncoder(passwordEncoder());
+                return provider;
     }
 }

@@ -1,0 +1,24 @@
+<section class="card login-card">
+  <h1>Iniciar sesion</h1>
+  <p>Use su email y contrasena para ingresar al modulo de empleados.</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+    <label>
+      Email
+      <input type="email" formControlName="email" placeholder="usuario@empresa.com" />
+    </label>
+
+    <label>
+      Contrasena
+      <input type="password" formControlName="password" placeholder="********" />
+    </label>
+
+    @if (errorMessage) {
+      <p class="msg-error">{{ errorMessage }}</p>
+    }
+
+    <button class="btn btn-accent" type="submit" [disabled]="loading">
+      {{ loading ? 'Validando...' : 'Entrar' }}
+    </button>
+  </form>
+</section>

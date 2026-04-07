@@ -69,6 +69,10 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T008 Configure Docker Compose for local PostgreSQL
 - [ ] T009 Configure environment-driven application properties
 - [ ] T010 [P] Enable and validate OpenAPI/Swagger UI
+- [ ] T011 [P] Establish API versioning strategy in routes/contracts (e.g., `/api/v1`)
+- [ ] T012 Define and validate list pagination policy (default block size 5 unless exception)
+- [ ] T013 [P] If feature includes web CRUD UI, initialize Angular frontend workspace and app shell
+- [ ] T014 If feature includes web CRUD UI, implement Angular service layer aligned to versioned backend API
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

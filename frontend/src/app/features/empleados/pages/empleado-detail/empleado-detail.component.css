@@ -1,0 +1,16 @@
+dl {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 0.5rem 0.75rem;
+}
+
+dt {
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+}

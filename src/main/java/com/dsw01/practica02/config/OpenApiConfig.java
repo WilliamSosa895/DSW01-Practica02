@@ -15,7 +15,7 @@ public class OpenApiConfig {
     public OpenAPI employeesOpenApi() {
         String scheme = "basicAuth";
         return new OpenAPI()
-                .info(new Info().title("Employees CRUD API").version("1.0.0"))
+            .info(new Info().title("Employees Auth API").version("1.0.0"))
                 .components(new Components()
                         .addSecuritySchemes(scheme,
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))

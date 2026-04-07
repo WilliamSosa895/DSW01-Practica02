@@ -9,6 +9,8 @@ target/
 # Build / IDE
 build/
 out/
+dist/
+node_modules/
 .idea/
 .vscode/
 *.iml
