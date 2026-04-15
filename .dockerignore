@@ -6,6 +6,7 @@
 target/
 build/
 out/
+dist/
 *.class
 *.jar
 *.war
@@ -21,6 +22,7 @@ out/
 
 # Dependencies/cache
 .m2/
+node_modules/
 
 # Docker files
 Dockerfile*

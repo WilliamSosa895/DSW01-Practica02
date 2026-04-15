@@ -3,9 +3,11 @@ package com.dsw01.practica02.controller;
 import com.dsw01.practica02.dto.EmpleadoCreateRequest;
 import com.dsw01.practica02.dto.EmpleadoPageResponse;
 import com.dsw01.practica02.dto.EmpleadoResponse;
+import com.dsw01.practica02.dto.SesionUsuarioResponse;
 import com.dsw01.practica02.dto.EmpleadoUpdateRequest;
 import com.dsw01.practica02.service.EmpleadoService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/empleados")
+@RequestMapping("/api/v1/empleados")
 public class EmpleadoController {
 
     private final EmpleadoService empleadoService;
@@ -42,6 +44,11 @@ public class EmpleadoController {
     public EmpleadoPageResponse list(@RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size) {
         return empleadoService.list(page, size);
+    }
+
+    @GetMapping("/contexto")
+    public SesionUsuarioResponse context(Authentication authentication) {
+        return empleadoService.getSessionContext(authentication);
     }
 
     @PutMapping("/{clave}")

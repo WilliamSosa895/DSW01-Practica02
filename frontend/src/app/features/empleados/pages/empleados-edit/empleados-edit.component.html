@@ -1,0 +1,63 @@
+<section class="card">
+  <header>
+    <h2>{{ isEditMode ? 'Editar empleado' : 'Nuevo empleado' }}</h2>
+    <a routerLink="/empleados">Volver al listado</a>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="edit-form">
+    <label>
+      Nombre
+      <input type="text" formControlName="nombre" />
+    </label>
+
+    <label>
+      Email
+      <input type="email" formControlName="email" />
+    </label>
+
+    <label>
+      Direccion
+      <input type="text" formControlName="direccion" />
+    </label>
+
+    <label>
+      Telefono
+      <input type="text" formControlName="telefono" />
+    </label>
+
+    <label>
+      Contrasena
+      <input type="password" formControlName="contrasena" />
+      <small>Debe incluir mayuscula, minuscula, digito y caracter especial (8-64).</small>
+    </label>
+
+    <label>
+      Rol
+      <select formControlName="rol">
+        <option value="MASTER">MASTER</option>
+        <option value="STANDARD">STANDARD</option>
+      </select>
+    </label>
+
+    <label>
+      Departamento
+      <select formControlName="departamentoClave">
+        @for (departamento of departamentos; track departamento.clave) {
+          <option [value]="departamento.clave">{{ departamento.nombre }}</option>
+        }
+      </select>
+    </label>
+
+    @if (errorMessage) {
+      <p class="msg-error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="msg-ok">{{ successMessage }}</p>
+    }
+
+    <button class="btn btn-accent" type="submit" [disabled]="loading">
+      {{ loading ? 'Guardando...' : 'Guardar cambios' }}
+    </button>
+  </form>
+</section>
