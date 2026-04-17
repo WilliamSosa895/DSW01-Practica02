@@ -1,0 +1,28 @@
+<section class="card">
+  <a routerLink="/empleados">Volver al listado</a>
+
+  @if (errorMessage) {
+    <p class="msg-error">{{ errorMessage }}</p>
+  } @else if (empleado) {
+    <h2>{{ empleado.nombre }}</h2>
+    <dl>
+      <dt>Clave</dt>
+      <dd>{{ empleado.clave }}</dd>
+
+      <dt>Email</dt>
+      <dd>{{ empleado.email }}</dd>
+
+      <dt>Direccion</dt>
+      <dd>{{ empleado.direccion }}</dd>
+
+      <dt>Telefono</dt>
+      <dd>{{ empleado.telefono }}</dd>
+
+      <dt>Rol</dt>
+      <dd>{{ empleado.rol }}</dd>
+
+      <dt>Departamento</dt>
+      <dd>{{ empleado.departamento.nombre }}</dd>
+    </dl>
+  }
+</section>

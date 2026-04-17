@@ -7,6 +7,8 @@ public class ErrorResponse {
     private String message;
     private String path;
     private String timestamp;
+    private String code;
+    private String action;
 
     public ErrorResponse() {
     }
@@ -17,6 +19,22 @@ public class ErrorResponse {
         this.message = message;
         this.path = path;
         this.timestamp = timestamp;
+    }
+
+    public ErrorResponse(int status,
+                         String error,
+                         String message,
+                         String path,
+                         String timestamp,
+                         String code,
+                         String action) {
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.path = path;
+        this.timestamp = timestamp;
+        this.code = code;
+        this.action = action;
     }
 
     public int getStatus() {
@@ -57,5 +75,21 @@ public class ErrorResponse {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }

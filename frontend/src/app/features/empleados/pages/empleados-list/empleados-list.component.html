@@ -1,0 +1,56 @@
+<section class="card">
+  <header class="header">
+    <div>
+      <h2>Empleados</h2>
+      <p>Pagina {{ page + 1 }} de {{ totalPages || 1 }}</p>
+    </div>
+
+    @if (isMaster) {
+      <a class="btn btn-accent" routerLink="/empleados/nuevo">Nuevo empleado</a>
+    }
+  </header>
+
+  @if (loading) {
+    <p>Cargando empleados...</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Clave</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Departamento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (empleado of empleados; track empleado.clave) {
+          <tr>
+            <td>{{ empleado.clave }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.email }}</td>
+            <td>{{ empleado.rol }}</td>
+            <td>{{ empleado.departamento.nombre }}</td>
+            <td class="actions">
+              <a class="btn" [routerLink]="['/empleados', empleado.clave]">Detalle</a>
+              @if (isMaster) {
+                <a class="btn" [routerLink]="['/empleados', empleado.clave, 'editar']">Editar</a>
+                <button class="btn btn-danger" type="button" (click)="remove(empleado.clave)">Eliminar</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (errorMessage) {
+    <p class="msg-error">{{ errorMessage }}</p>
+  }
+
+  <footer class="pager">
+    <button class="btn" type="button" (click)="prevPage()" [disabled]="page === 0">Anterior</button>
+    <button class="btn" type="button" (click)="nextPage()" [disabled]="page + 1 >= totalPages">Siguiente</button>
+  </footer>
+</section>

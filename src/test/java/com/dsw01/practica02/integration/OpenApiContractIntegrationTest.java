@@ -21,8 +21,14 @@ class OpenApiContractIntegrationTest extends AbstractIntegrationTest {
     void shouldExposeOpenApiContractWithExpectedEndpoints() throws Exception {
         mockMvc.perform(get("/api-docs"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/empleados")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/empleados/{clave}")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("basicAuth")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/v1/departamentos")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/v1/departamentos/{clave}")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/v1/empleados")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/v1/empleados/{clave}")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("basicAuth")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("contrasena")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("departamentoClave")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("departamento")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("writeOnly")));
     }
 }

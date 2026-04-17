@@ -75,6 +75,9 @@
 - What happens when request omits or has invalid Basic Auth credentials?
 - How does system handle PostgreSQL unavailability or Docker container downtime?
 - What is the API behavior when Swagger/OpenAPI documentation is out of sync?
+- What happens when a client consumes an unversioned or deprecated API route?
+- What is the behavior when paginated list endpoints receive page/size values fuera de política?
+- If the feature includes web CRUD UI, how does Angular handle client-side validation and API errors?
 
 ## Requirements *(mandatory)*
 
@@ -90,11 +93,14 @@
 - **FR-003**: System MUST use PostgreSQL as persistence engine.
 - **FR-004**: System MUST provide Docker-based local database provisioning.
 - **FR-005**: System MUST expose and keep updated OpenAPI/Swagger documentation.
+- **FR-006**: System MUST expose nuevas funcionalidades en rutas de API versionadas (e.g., `/api/v1/...`) o estrategia equivalente explícitamente documentada.
+- **FR-007**: System MUST aplicar paginación por bloques de 5 registros en endpoints de listado, salvo excepción aprobada y documentada.
+- **FR-008**: If the feature includes web CRUD UI, system MUST implement frontend in Angular and align forms/messages with backend validations.
 
 *Example of marking unclear requirements:*
 
-- **FR-006**: System MUST define which endpoints can be excluded from Basic Auth [NEEDS CLARIFICATION: allowed public endpoints].
-- **FR-007**: System MUST define data retention policy [NEEDS CLARIFICATION: retention period not specified].
+- **FR-009**: System MUST define which endpoints can be excluded from Basic Auth [NEEDS CLARIFICATION: allowed public endpoints].
+- **FR-010**: System MUST define data retention policy [NEEDS CLARIFICATION: retention period not specified].
 
 ### Key Entities *(include if feature involves data)*
 

@@ -1,0 +1,7 @@
+@if (authService.session$ | async; as session) {
+  <app-topbar [session]="session"></app-topbar>
+}
+
+<main class="app-shell">
+  <router-outlet></router-outlet>
+</main>

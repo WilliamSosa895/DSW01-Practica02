@@ -1,0 +1,13 @@
+<header class="topbar">
+  <div class="brand">
+    <strong>DSW01</strong>
+    <span>Gestion de Empleados</span>
+  </div>
+
+  <nav class="actions">
+    <a routerLink="/empleados">Empleados</a>
+    <span class="chip" [class.master]="session.rol === 'MASTER'">{{ session.rol }}</span>
+    <span>{{ session.username }}</span>
+    <button class="btn" type="button" (click)="logout()">Cerrar sesion</button>
+  </nav>
+</header>

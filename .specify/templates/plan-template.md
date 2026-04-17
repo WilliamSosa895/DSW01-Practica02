@@ -32,9 +32,12 @@
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 - [ ] Stack uses Spring Boot on Java 17 only.
-- [ ] HTTP access enforces Basic Auth (except explicitly documented health endpoints).
+- [ ] HTTP access enforces Basic Auth (except explicitly documented health/documentation endpoints).
 - [ ] Persistence uses PostgreSQL and includes Docker-based local provisioning.
 - [ ] New or modified endpoints include OpenAPI/Swagger updates.
+- [ ] New or modified API routes include explicit versioning strategy (e.g., `/api/v1`).
+- [ ] List endpoints define pagination policy (default block size 5 unless approved exception).
+- [ ] If feature includes web CRUD UI, frontend uses Angular and is covered by executable checks.
 - [ ] Plan includes executable quality checks (unit/integration tests and run steps).
 
 ## Project Structure
@@ -82,9 +85,13 @@ backend/
 
 frontend/
 ├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
+│   ├── app/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── services/
+│   └── assets/
+├── angular.json
+├── package.json
 └── tests/
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
