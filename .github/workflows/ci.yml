@@ -24,7 +24,7 @@ jobs:
           cache: maven
 
       - name: Run backend unit tests
-        run: mvn -B -Dtest="com.dsw01.practica02.unit.*" test
+        run: mvn -B -Dtest="com.dsw01.practica02.unit.*Test" test
 
   frontend-tests:
     name: Frontend Unit + Cypress
