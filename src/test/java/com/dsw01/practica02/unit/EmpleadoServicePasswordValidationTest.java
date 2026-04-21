@@ -65,6 +65,7 @@ class EmpleadoServicePasswordValidationTest {
 
         Empleado existing = new Empleado();
         existing.setClave(1L);
+        existing.setVersion(0L);
         existing.setDepartamento(dep);
 
         EmpleadoUpdateRequest request = new EmpleadoUpdateRequest();
@@ -74,6 +75,7 @@ class EmpleadoServicePasswordValidationTest {
         request.setTelefono("Tel");
         request.setContrasena("Abcdef1!");
         request.setDepartamentoClave(1L);
+        request.setVersion(0L);
 
         when(departamentoService.getByClaveEntity(1L)).thenReturn(dep);
         when(empleadoRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -93,6 +95,7 @@ class EmpleadoServicePasswordValidationTest {
         request.setTelefono("Tel");
         request.setContrasena("Abcdef1!");
         request.setDepartamentoClave(1L);
+        request.setVersion(0L);
 
         when(empleadoRepository.findById(88L)).thenReturn(Optional.empty());
 
