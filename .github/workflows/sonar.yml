@@ -1,5 +1,5 @@
 # Sonar Cloud Analysis Workflow
-name: Sonar
+name: Sonar0.2
 
 on:
   push:
