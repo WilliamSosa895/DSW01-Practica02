@@ -1,4 +1,4 @@
-name: Docker Hub Publish v0.5
+name: Docker Hub Publish v0.6
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     env:
-      DOCKERHUB_IMAGE: ${{ vars.DOCKERHUB_IMAGE }}
+      DOCKERHUB_IMAGE: ${{ vars.DOCKERHUB_IMAGE || format('{0}/{1}', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
 
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
       - name: Validate Docker image name
         run: |
           if [ -z "$DOCKERHUB_IMAGE" ]; then
-            echo "DOCKERHUB_IMAGE must be set as a GitHub Variable."
+            echo "DOCKERHUB_IMAGE could not be resolved. Set it as a GitHub Variable or confirm DOCKERHUB_USERNAME is configured."
             exit 1
           fi
 
