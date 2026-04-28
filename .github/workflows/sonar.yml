@@ -1,5 +1,5 @@
 # Sonar Cloud Analysis Workflow
-name: Sonar v0.3
+name: Sonar
 
 on:
   push:
@@ -14,6 +14,10 @@ jobs:
   sonar-analysis:
     name: Sonar Analysis
     runs-on: ubuntu-latest
+    env:
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY || secrets.SONAR_PROJECT_KEY }}
+      SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION || secrets.SONAR_ORGANIZATION }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -33,7 +37,7 @@ jobs:
 
       - name: Validate Sonar variables
         run: |
-          if [ -z "${{ vars.SONAR_PROJECT_KEY }}" ] || [ -z "${{ vars.SONAR_ORGANIZATION }}" ]; then
+          if [ -z "$SONAR_PROJECT_KEY" ] || [ -z "$SONAR_ORGANIZATION" ]; then
             echo "SONAR_PROJECT_KEY and SONAR_ORGANIZATION must be set as GitHub Variables."
             exit 1
           fi
@@ -41,12 +45,11 @@ jobs:
       - name: Run Sonar scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
             -Dsonar.sources=src/main/java,frontend/src
             -Dsonar.tests=src/test/java,frontend/src
             -Dsonar.test.inclusions=src/test/java/**/*.java,frontend/src/**/*.spec.ts
