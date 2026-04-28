@@ -1,3 +1,4 @@
+# Sonar Cloud Analysis Workflow
 name: Sonar
 
 on:
