@@ -3,9 +3,10 @@ name: Sonar
 on:
   push:
     branches:
-      - main
-      - master
+      - develop
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
