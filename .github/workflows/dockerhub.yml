@@ -1,0 +1,71 @@
+name: dockerhub
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    name: Build and Push Backend + Frontend Images
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'develop' }}
+    env:
+      BACKEND_IMAGE_RAW: ${{ vars.DOCKERHUB_BACKEND_IMAGE || format('{0}/{1}-backend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
+      FRONTEND_IMAGE_RAW: ${{ vars.DOCKERHUB_FRONTEND_IMAGE || format('{0}/{1}-frontend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Normalize image names
+        run: |
+          if [ -z "$BACKEND_IMAGE_RAW" ] || [ -z "$FRONTEND_IMAGE_RAW" ]; then
+            echo "DOCKERHUB_BACKEND_IMAGE and DOCKERHUB_FRONTEND_IMAGE could not be resolved."
+            exit 1
+          fi
+
+          normalized_backend=$(printf '%s' "$BACKEND_IMAGE_RAW" | tr '[:upper:]' '[:lower:]')
+          normalized_frontend=$(printf '%s' "$FRONTEND_IMAGE_RAW" | tr '[:upper:]' '[:lower:]')
+          echo "DOCKERHUB_BACKEND_IMAGE=$normalized_backend" >> "$GITHUB_ENV"
+          echo "DOCKERHUB_FRONTEND_IMAGE=$normalized_frontend" >> "$GITHUB_ENV"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Validate image names
+        run: |
+          case "$DOCKERHUB_BACKEND_IMAGE" in */*) : ;; *) echo "Invalid backend image: $DOCKERHUB_BACKEND_IMAGE"; exit 1 ;; esac
+          case "$DOCKERHUB_FRONTEND_IMAGE" in */*) : ;; *) echo "Invalid frontend image: $DOCKERHUB_FRONTEND_IMAGE"; exit 1 ;; esac
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_BACKEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.DOCKERHUB_BACKEND_IMAGE }}:${{ github.sha }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_FRONTEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.DOCKERHUB_FRONTEND_IMAGE }}:${{ github.sha }}

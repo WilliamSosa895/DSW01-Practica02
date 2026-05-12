@@ -1,3 +1,4 @@
+# Sonar Cloud Analysis Workflow
 name: Sonar
 
 on:
@@ -13,7 +14,10 @@ jobs:
   sonar-analysis:
     name: Sonar Analysis
     runs-on: ubuntu-latest
-    if: ${{ secrets.SONAR_TOKEN != '' }}
+    env:
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY || secrets.SONAR_PROJECT_KEY }}
+      SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION || secrets.SONAR_ORGANIZATION }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -29,11 +33,11 @@ jobs:
           cache: maven
 
       - name: Build backend classes for Sonar Java analysis
-        run: mvn -B -DskipTests compile
+        run: mvn -B -f backend/pom.xml -DskipTests compile
 
       - name: Validate Sonar variables
         run: |
-          if [ -z "${{ vars.SONAR_PROJECT_KEY }}" ] || [ -z "${{ vars.SONAR_ORGANIZATION }}" ]; then
+          if [ -z "$SONAR_PROJECT_KEY" ] || [ -z "$SONAR_ORGANIZATION" ]; then
             echo "SONAR_PROJECT_KEY and SONAR_ORGANIZATION must be set as GitHub Variables."
             exit 1
           fi
@@ -41,14 +45,13 @@ jobs:
       - name: Run Sonar scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.sources=src/main/java,frontend/src
-            -Dsonar.tests=src/test/java,frontend/src
-            -Dsonar.test.inclusions=src/test/java/**/*.java,frontend/src/**/*.spec.ts
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
+            -Dsonar.sources=backend/src/main/java,frontend/src
+            -Dsonar.tests=backend/src/test/java,frontend/src
+            -Dsonar.test.inclusions=backend/src/test/java/**/*.java,frontend/src/**/*.spec.ts
             -Dsonar.exclusions=**/target/**,**/node_modules/**,**/*.cy.js
-            -Dsonar.java.binaries=target/classes
+            -Dsonar.java.binaries=backend/target/classes
