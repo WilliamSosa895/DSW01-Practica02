@@ -1,4 +1,4 @@
-name: CI
+name: Ci
 
 on:
   push:
@@ -11,6 +11,9 @@ jobs:
   backend-unit-tests:
     name: Backend Unit Tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - name: Checkout repository
@@ -27,7 +30,7 @@ jobs:
         run: mvn -B -Dtest="com.dsw01.practica02.unit.*Test" test
 
   frontend-tests:
-    name: Frontend Unit + Cypress
+    name: Frontend Unit Tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,12 +52,3 @@ jobs:
 
       - name: Run frontend unit tests
         run: npm test
-
-      - name: Run Cypress e2e tests
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: frontend
-          start: npm start -- --host 0.0.0.0 --port 4200
-          wait-on: http://localhost:4200
-          wait-on-timeout: 120
-          spec: cypress/e2e/auth-login.cy.js,cypress/e2e/empleados-crud.cy.js

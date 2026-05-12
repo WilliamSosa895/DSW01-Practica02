@@ -33,7 +33,7 @@ jobs:
           cache: maven
 
       - name: Build backend classes for Sonar Java analysis
-        run: mvn -B -DskipTests compile
+        run: mvn -B -f backend/pom.xml -DskipTests compile
 
       - name: Validate Sonar variables
         run: |
@@ -50,8 +50,8 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
-            -Dsonar.sources=src/main/java,frontend/src
-            -Dsonar.tests=src/test/java,frontend/src
-            -Dsonar.test.inclusions=src/test/java/**/*.java,frontend/src/**/*.spec.ts
+            -Dsonar.sources=backend/src/main/java,frontend/src
+            -Dsonar.tests=backend/src/test/java,frontend/src
+            -Dsonar.test.inclusions=backend/src/test/java/**/*.java,frontend/src/**/*.spec.ts
             -Dsonar.exclusions=**/target/**,**/node_modules/**,**/*.cy.js
-            -Dsonar.java.binaries=target/classes
+            -Dsonar.java.binaries=backend/target/classes
