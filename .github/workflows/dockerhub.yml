@@ -50,6 +50,16 @@ jobs:
           case "$DOCKERHUB_BACKEND_IMAGE" in */*) : ;; *) echo "Invalid backend image: $DOCKERHUB_BACKEND_IMAGE"; exit 1 ;; esac
           case "$DOCKERHUB_FRONTEND_IMAGE" in */*) : ;; *) echo "Invalid frontend image: $DOCKERHUB_FRONTEND_IMAGE"; exit 1 ;; esac
 
+      - name: Compute safe image tag
+        run: |
+          ref_source="${{ github.head_ref || github.ref_name }}"
+          safe_ref=$(printf '%s' "$ref_source" | tr '[:upper:]' '[:lower:]' | tr '/ ' '--')
+          if [ -z "$safe_ref" ]; then
+            echo "Could not compute safe ref tag"
+            exit 1
+          fi
+          echo "IMAGE_REF_TAG=$safe_ref" >> "$GITHUB_ENV"
+
       - name: Build and push backend image
         uses: docker/build-push-action@v6
         with:
@@ -57,7 +67,7 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKERHUB_BACKEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.DOCKERHUB_BACKEND_IMAGE }}:${{ env.IMAGE_REF_TAG }}
             ${{ env.DOCKERHUB_BACKEND_IMAGE }}:${{ github.sha }}
 
       - name: Build and push frontend image
@@ -67,5 +77,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKERHUB_FRONTEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.DOCKERHUB_FRONTEND_IMAGE }}:${{ env.IMAGE_REF_TAG }}
             ${{ env.DOCKERHUB_FRONTEND_IMAGE }}:${{ github.sha }}
