@@ -1,0 +1,39 @@
+name: Cypress
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  cypress-e2e:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'develop' }}
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress e2e tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          start: npm start -- --host 0.0.0.0 --port 4200
+          wait-on: http://localhost:4200
+          wait-on-timeout: 120
+          spec: cypress/e2e/auth-login.cy.js,cypress/e2e/empleados-crud.cy.js
