@@ -5,12 +5,16 @@ on:
     branches:
       - main
       - develop
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build-and-push:
     name: Build and Push Backend + Frontend Images
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'develop' }}
     env:
       BACKEND_IMAGE_RAW: ${{ vars.DOCKERHUB_BACKEND_IMAGE || format('{0}/{1}-backend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
       FRONTEND_IMAGE_RAW: ${{ vars.DOCKERHUB_FRONTEND_IMAGE || format('{0}/{1}-frontend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
