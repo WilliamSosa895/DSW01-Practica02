@@ -2,18 +2,20 @@
 name: Sonar
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - Ci
+    types:
+      - completed
     branches:
       - develop
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   sonar-analysis:
     name: Sonar Analysis
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     env:
       SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY || secrets.SONAR_PROJECT_KEY }}
       SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION || secrets.SONAR_ORGANIZATION }}
@@ -23,6 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0
 
       - name: Set up JDK 17
