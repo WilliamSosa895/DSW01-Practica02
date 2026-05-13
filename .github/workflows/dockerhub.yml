@@ -1,20 +1,20 @@
 name: dockerhub
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - Cypress
+    types:
+      - completed
     branches:
-      - main
       - develop
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   build-and-push:
     name: Build and Push Backend + Frontend Images
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'develop' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     env:
       BACKEND_IMAGE_RAW: ${{ vars.DOCKERHUB_BACKEND_IMAGE || format('{0}/{1}-backend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
       FRONTEND_IMAGE_RAW: ${{ vars.DOCKERHUB_FRONTEND_IMAGE || format('{0}/{1}-frontend', secrets.DOCKERHUB_USERNAME, github.event.repository.name) }}
@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,7 +54,7 @@ jobs:
 
       - name: Compute safe image tag
         run: |
-          ref_source="${{ github.head_ref || github.ref_name }}"
+          ref_source="${{ github.event.workflow_run.head_branch || github.ref_name }}"
           safe_ref=$(printf '%s' "$ref_source" | tr '[:upper:]' '[:lower:]' | tr '/ ' '--')
           if [ -z "$safe_ref" ]; then
             echo "Could not compute safe ref tag"
